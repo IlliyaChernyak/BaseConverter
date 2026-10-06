@@ -6,325 +6,57 @@
   <title>Number Base Converter</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      padding: 40px 16px;
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       background: #0f0f1a;
       color: #e0e0e0;
     }
-
-    .card {
+    .app {
+      width: 560px;
+    }
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 12px 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid #2a2a4a;
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      background: #12121f;
+      color: #666;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tab-btn:hover { color: #aaa; }
+    .tab-btn.active {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      border-color: #2a2a4a;
+    }
+    .tab-content {
+      display: none;
       background: #1a1a2e;
       border: 1px solid #2a2a4a;
-      border-radius: 16px;
-      padding: 40px;
-      width: 480px;
+      border-radius: 0 0 16px 16px;
+      padding: 32px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
-
-    h1 {
+    .tab-content.active { display: block; }
+    h2 {
       text-align: center;
-      font-size: 1.6rem;
-      margin-bottom: 8px;
+      font-size: 1.4rem;
+      margin-bottom: 6px;
       background: linear-gradient(135deg, #6ee7b7, #3b82f6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #666;
-      font-size: 0.85rem;
-      margin-bottom: 32px;
-    }
-
-    .field {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      color: #888;
-      margin-bottom: 6px;
-    }
-
-    .input-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .badge {
-      flex-shrink: 0;
-      width: 44px;
-      text-align: center;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 10px 0;
-      border-radius: 8px;
-      letter-spacing: 1px;
-    }
-
-    .badge-dec { background: #1e3a5f; color: #60a5fa; }
-    .badge-hex { background: #3b1f4e; color: #c084fc; }
-    .badge-bin { background: #1a3d2e; color: #6ee7b7; }
-    .badge-oct { background: #3d2e1a; color: #fbbf24; }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px 14px;
-      font-size: 1.05rem;
-      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-      background: #12121f;
-      border: 2px solid #2a2a4a;
-      border-radius: 8px;
-      color: #e0e0e0;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input[type="text"]:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-    }
-
-    input[type="text"].error {
-      border-color: #ef4444;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-    }
-
-    input[type="text"].active-source {
-      border-color: #6ee7b7;
-      box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.15);
-    }
-
-    .error-msg {
-      color: #ef4444;
-      font-size: 0.78rem;
-      margin-top: 4px;
-      min-height: 1.2em;
-      padding-left: 52px;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 10px;
-      margin-top: 28px;
-    }
-
-    button {
-      flex: 1;
-      padding: 14px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.2s;
-    }
-
-    button:active { transform: scale(0.97); }
-
-    .btn-convert {
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      color: white;
-      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-    }
-
-    .btn-convert:hover {
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
-    }
-
-    .btn-clear {
-      background: #2a2a4a;
-      color: #aaa;
-      flex: 0.4;
-    }
-
-    .btn-clear:hover { background: #3a3a5a; color: #ccc; }
-
-    .hint {
-      text-align: center;
-      color: #555;
-      font-size: 0.75rem;
-      margin-top: 16px;
-    }
-  </style>
-</head>
-<body>
-
-<div class="card">
-  <h1>Base Converter</h1>
-  <p class="subtitle">Decimal · Hexadecimal · Binary · Octal</p>
-
-  <div class="field">
-    <label>Decimal (base 10)</label>
-    <div class="input-row">
-      <span class="badge badge-dec">DEC</span>
-      <input type="text" id="dec" placeholder="e.g. 255" autocomplete="off">
-    </div>
-    <div class="error-msg" id="dec-err"></div>
-  </div>
-
-  <div class="field">
-    <label>Hexadecimal (base 16)</label>
-    <div class="input-row">
-      <span class="badge badge-hex">HEX</span>
-      <input type="text" id="hex" placeholder="e.g. FF" autocomplete="off">
-    </div>
-    <div class="error-msg" id="hex-err"></div>
-  </div>
-
-  <div class="field">
-    <label>Binary (base 2)</label>
-    <div class="input-row">
-      <span class="badge badge-bin">BIN</span>
-      <input type="text" id="bin" placeholder="e.g. 11111111" autocomplete="off">
-    </div>
-    <div class="error-msg" id="bin-err"></div>
-  </div>
-
-  <div class="field">
-    <label>Octal (base 8)</label>
-    <div class="input-row">
-      <span class="badge badge-oct">OCT</span>
-      <input type="text" id="oct" placeholder="e.g. 377" autocomplete="off">
-    </div>
-    <div class="error-msg" id="oct-err"></div>
-  </div>
-
-  <div class="btn-row">
-    <button class="btn-convert" onclick="convert()">Convert</button>
-    <button class="btn-clear" onclick="clearAll()">Clear</button>
-  </div>
-
-  <p class="hint">Type a number in any field, then hit Convert</p>
-</div>
-
-<script>
-  const fields = ['dec', 'hex', 'bin', 'oct'];
-  const inputs = {};
-  const errors = {};
-
-  fields.forEach(f => {
-    inputs[f] = document.getElementById(f);
-    errors[f] = document.getElementById(f + '-err');
-  });
-
-  // Track which field was last edited
-  let lastEdited = null;
-
-  fields.forEach(f => {
-    inputs[f].addEventListener('input', () => {
-      lastEdited = f;
-      // Clear previous highlights
-      fields.forEach(ff => inputs[ff].classList.remove('active-source'));
-      inputs[f].classList.add('active-source');
-    });
-
-    inputs[f].addEventListener('focus', () => {
-      lastEdited = f;
-      fields.forEach(ff => inputs[ff].classList.remove('active-source'));
-      inputs[f].classList.add('active-source');
-    });
-
-    // Convert on Enter key
-    inputs[f].addEventListener('keydown', e => {
-      if (e.key === 'Enter') convert();
-    });
-  });
-
-  function clearErrors() {
-    fields.forEach(f => {
-      errors[f].textContent = '';
-      inputs[f].classList.remove('error');
-    });
-  }
-
-  function clearAll() {
-    fields.forEach(f => {
-      inputs[f].value = '';
-      inputs[f].classList.remove('error', 'active-source');
-      errors[f].textContent = '';
-    });
-    lastEdited = null;
-  }
-
-  function convert() {
-    clearErrors();
-
-    // Find which field has input — prioritize last edited
-    let source = lastEdited;
-    if (!source || inputs[source].value.trim() === '') {
-      // Fallback: find first non-empty
-      source = fields.find(f => inputs[f].value.trim() !== '');
-    }
-
-    if (!source) return; // nothing to convert
-
-    const raw = inputs[source].value.trim();
-    let value;
-
-    // Parse based on source base
-    switch (source) {
-      case 'dec':
-        if (!/^[0-9]+$/.test(raw)) {
-          errors.dec.textContent = 'Invalid decimal — digits 0-9 only';
-          inputs.dec.classList.add('error');
-          return;
-        }
-        value = parseInt(raw, 10);
-        break;
-
-      case 'hex':
-        if (!/^[0-9a-fA-F]+$/.test(raw)) {
-          errors.hex.textContent = 'Invalid hex — digits 0-9 and A-F only';
-          inputs.hex.classList.add('error');
-          return;
-        }
-        value = parseInt(raw, 16);
-        break;
-
-      case 'bin':
-        if (!/^[01]+$/.test(raw)) {
-          errors.bin.textContent = 'Invalid binary — digits 0 and 1 only';
-          inputs.bin.classList.add('error');
-          return;
-        }
-        value = parseInt(raw, 2);
-        break;
-
-      case 'oct':
-        if (!/^[0-7]+$/.test(raw)) {
-          errors.oct.textContent = 'Invalid octal — digits 0-7 only';
-          inputs.oct.classList.add('error');
-          return;
-        }
-        value = parseInt(raw, 8);
-        break;
-    }
-
-    if (isNaN(value) || value < 0) {
-      errors[source].textContent = 'Could not parse the number';
-      inputs[source].classList.add('error');
-      return;
-    }
-
-    // Fill all fields
-    inputs.dec.value = value.toString(10);
-    inputs.hex.value = value.toString(16).toUpperCase();
-    inputs.bin.value = value.toString(2);
-    inputs.oct.value = value.toString(8);
-  }
-</script>
-
-</body>
-</html>
