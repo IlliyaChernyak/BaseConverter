@@ -3,6 +3,8 @@ A lightweight, offline web app for instant conversions between **Decimal**, **He
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+## 🌍 Live Demo
+**Try it now → [illiyachernyak.github.io/BaseConverter](https://illiyachernyak.github.io/BaseConverter/)**
 ## ✨ Features
 - **4-way conversion** — Decimal ↔ Hex ↔ Binary ↔ Octal
 - **Type anywhere** — Enter a number in any field and convert from there
@@ -33,6 +35,3 @@ That's it — no server, no install, no setup.
 calc/
 ├── converter.html   ← The entire app (HTML + CSS + JS)
 └── README.md
-```
-## 🌐 Browser Support
-Works in all modern browsers:
