@@ -6,6 +6,7 @@
   <title>Number Base Converter</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
       min-height: 100vh;
       display: flex;
@@ -16,15 +17,18 @@
       background: #0f0f1a;
       color: #e0e0e0;
     }
+
     .app {
       width: 560px;
     }
+
     /* ── Tabs ── */
     .tabs {
       display: flex;
       gap: 4px;
       margin-bottom: 0;
     }
+
     .tab-btn {
       flex: 1;
       padding: 12px 8px;
@@ -38,12 +42,15 @@
       cursor: pointer;
       transition: background 0.2s, color 0.2s;
     }
+
     .tab-btn:hover { color: #aaa; }
+
     .tab-btn.active {
       background: #1a1a2e;
       color: #e0e0e0;
       border-color: #2a2a4a;
     }
+
     .tab-content {
       display: none;
       background: #1a1a2e;
@@ -52,7 +59,9 @@
       padding: 32px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     }
+
     .tab-content.active { display: block; }
+
     h2 {
       text-align: center;
       font-size: 1.4rem;
@@ -60,3 +69,1298 @@
       background: linear-gradient(135deg, #6ee7b7, #3b82f6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 0.82rem;
+      margin-bottom: 28px;
+    }
+
+    /* ── Shared form elements ── */
+    .field { margin-bottom: 18px; }
+
+    .field-label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      flex-shrink: 0;
+      width: 44px;
+      text-align: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 10px 0;
+      border-radius: 8px;
+      letter-spacing: 1px;
+    }
+
+    .badge-dec { background: #1e3a5f; color: #60a5fa; }
+    .badge-hex { background: #3b1f4e; color: #c084fc; }
+    .badge-bin { background: #1a3d2e; color: #6ee7b7; }
+    .badge-oct { background: #3d2e1a; color: #fbbf24; }
+    .badge-a   { background: #1e3a5f; color: #60a5fa; }
+    .badge-b   { background: #3b1f4e; color: #c084fc; }
+
+    input[type="text"], select {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 11px 14px;
+      font-size: 1rem;
+      background: #12121f;
+      border: 2px solid #2a2a4a;
+      border-radius: 8px;
+      color: #e0e0e0;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input[type="text"]:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    input[type="text"].error {
+      border-color: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+
+    input[type="text"].active-source {
+      border-color: #6ee7b7;
+      box-shadow: 0 0 0 3px rgba(110, 231, 183, 0.15);
+    }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 0.76rem;
+      margin-top: 4px;
+      min-height: 1.1em;
+      padding-left: 52px;
+    }
+
+    select {
+      background: #12121f;
+      border: 1px solid #2a2a4a;
+      color: #e0e0e0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:focus { border-color: #3b82f6; }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    button {
+      flex: 1;
+      padding: 13px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    button:active { transform: scale(0.97); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+    }
+
+    .btn-secondary {
+      background: #2a2a4a;
+      color: #aaa;
+      flex: 0.4;
+    }
+
+    .btn-secondary:hover { background: #3a3a5a; color: #ccc; }
+
+    .hint {
+      text-align: center;
+      color: #555;
+      font-size: 0.73rem;
+      margin-top: 14px;
+    }
+
+    /* ── Options row (inline selects / checkboxes) ── */
+    .options-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 12px 14px;
+      background: #12121f;
+      border-radius: 8px;
+      border: 1px solid #2a2a4a;
+    }
+
+    .options-row label {
+      font-size: 0.78rem;
+      color: #888;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .options-row select { font-size: 0.78rem; padding: 4px 8px; }
+
+    /* ── Checkboxes (custom) ── */
+    input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #3a3a5a;
+      border-radius: 4px;
+      background: #12121f;
+      cursor: pointer;
+      flex-shrink: 0;
+      position: relative;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    input[type="checkbox"]:checked {
+      background: #3b82f6;
+      border-color: #3b82f6;
+    }
+
+    input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: -2px;
+      left: 1px;
+      font-size: 12px;
+      color: white;
+      font-weight: bold;
+    }
+
+    /* ── Signed section (Tab 1) ── */
+    .signed-section {
+      margin-top: 24px;
+      border-top: 1px solid #2a2a4a;
+      padding-top: 20px;
+    }
+
+    .signed-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .signed-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+    }
+
+    .bit-select {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .bit-select label {
+      font-size: 0.73rem;
+      color: #666;
+    }
+
+    .check-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .check-label {
+      font-size: 0.85rem;
+      color: #bbb;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check-output {
+      margin-left: auto;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.82rem;
+      color: #6ee7b7;
+      background: #12121f;
+      border: 1px solid #2a2a4a;
+      border-radius: 6px;
+      padding: 5px 10px;
+      min-width: 100px;
+      text-align: center;
+      opacity: 0.5;
+      transition: opacity 0.2s;
+    }
+
+    .check-output.has-value { opacity: 1; }
+
+    .overflow-warn {
+      color: #fbbf24;
+      font-size: 0.73rem;
+      margin-top: 4px;
+      padding-left: 26px;
+      min-height: 1em;
+    }
+
+    /* ── Steps visualisation ── */
+    .steps-container {
+      margin-top: 24px;
+      border-top: 1px solid #2a2a4a;
+      padding-top: 20px;
+    }
+
+    .steps-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      margin-bottom: 14px;
+    }
+
+    .step-box {
+      background: #12121f;
+      border: 1px solid #2a2a4a;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+    }
+
+    .step-box .step-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #6366f1;
+      margin-bottom: 8px;
+    }
+
+    .step-box pre {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #c8d6e5;
+      white-space: pre;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .step-box .note {
+      font-size: 0.76rem;
+      color: #888;
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    .result-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(99, 102, 241, 0.08));
+      border: 1px solid #3b82f6;
+    }
+
+    .result-box pre { color: #6ee7b7; font-weight: 600; }
+
+    .op-select-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .op-btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 2px solid #2a2a4a;
+      border-radius: 8px;
+      background: #12121f;
+      color: #888;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .op-btn:hover { border-color: #3a3a5a; color: #bbb; }
+
+    .op-btn.active {
+      border-color: #3b82f6;
+      color: #60a5fa;
+      background: rgba(59, 130, 246, 0.08);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #555;
+      padding: 32px 0;
+      font-size: 0.85rem;
+    }
+
+    /* Algorithm Table Styles */
+    .algo-table-wrapper {
+      overflow-x: auto;
+      margin-top: 16px;
+      margin-bottom: 24px;
+      border-radius: 8px;
+      border: 1px solid #2a2a4a;
+    }
+    .algo-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: center;
+      background: #12121f;
+    }
+    .algo-table th {
+      background: #3b82f6;
+      color: #ffffff;
+      padding: 10px;
+      font-weight: 600;
+      border: 1px solid #2a2a4a;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      text-transform: capitalize;
+    }
+    .algo-table td {
+      padding: 10px;
+      border: 1px solid #2a2a4a;
+      color: #c8d6e5;
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      vertical-align: middle;
+    }
+    .algo-table tbody tr:nth-child(even) {
+      background: #161625;
+    }
+    .algo-table .text-left {
+      text-align: left;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+    .algo-table .highlight {
+      color: #ef4444;
+      font-weight: bold;
+    }
+    .algo-table .action-step {
+      font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('converter')">🔢 Converter</button>
+    <button class="tab-btn" onclick="switchTab('addition')">➕ Addition</button>
+    <button class="tab-btn" onclick="switchTab('muldiv')">✖️ Multiply / Divide</button>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--  TAB 1 : CONVERTER                          -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="tab-content active" id="tab-converter">
+    <h2>Base Converter</h2>
+    <p class="subtitle">Decimal · Hexadecimal · Binary · Octal</p>
+
+    <div class="field">
+      <span class="field-label">Decimal (base 10)</span>
+      <div class="input-row">
+        <span class="badge badge-dec">DEC</span>
+        <input type="text" id="dec" placeholder="e.g. 255 or -42" autocomplete="off">
+      </div>
+      <div class="error-msg" id="dec-err"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Hexadecimal (base 16)</span>
+      <div class="input-row">
+        <span class="badge badge-hex">HEX</span>
+        <input type="text" id="hex" placeholder="e.g. FF" autocomplete="off">
+      </div>
+      <div class="error-msg" id="hex-err"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Binary (base 2)</span>
+      <div class="input-row">
+        <span class="badge badge-bin">BIN</span>
+        <input type="text" id="bin" placeholder="e.g. 11111111" autocomplete="off">
+      </div>
+      <div class="error-msg" id="bin-err"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Octal (base 8)</span>
+      <div class="input-row">
+        <span class="badge badge-oct">OCT</span>
+        <input type="text" id="oct" placeholder="e.g. 377" autocomplete="off">
+      </div>
+      <div class="error-msg" id="oct-err"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="convertBase()">Convert</button>
+      <button class="btn-secondary" onclick="clearConverter()">Clear</button>
+    </div>
+
+    <p class="hint">Type a number in any field, then hit Convert</p>
+
+    <!-- Signed binary representations -->
+    <div class="signed-section">
+      <div class="signed-header">
+        <span class="signed-title">Signed Binary</span>
+        <div class="bit-select">
+          <label>Bit width:</label>
+          <select id="bitWidth">
+            <option value="8" selected>8-bit</option>
+            <option value="16">16-bit</option>
+            <option value="32">32-bit</option>
+          </select>
+        </div>
+      </div>
+      <div class="check-group">
+        <div class="check-item">
+          <input type="checkbox" id="chkSM">
+          <label class="check-label" for="chkSM">Sign-Magnitude</label>
+          <span class="check-output" id="outSM">—</span>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="chkOC">
+          <label class="check-label" for="chkOC">Ones' Complement</label>
+          <span class="check-output" id="outOC">—</span>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="chkTC">
+          <label class="check-label" for="chkTC">Two's Complement</label>
+          <span class="check-output" id="outTC">—</span>
+        </div>
+      </div>
+      <div class="overflow-warn" id="signedWarn"></div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--  TAB 2 : BINARY ADDITION                    -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-addition">
+    <h2>Binary Addition</h2>
+    <p class="subtitle">Add two numbers with step-by-step breakdown</p>
+
+    <div class="options-row">
+      <label>
+        Input as:
+        <select id="addInputMode">
+          <option value="bin">Binary</option>
+          <option value="dec">Decimal</option>
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" id="addSigned">
+        Signed (Two's Complement)
+      </label>
+      <label>
+        Bits:
+        <select id="addBits">
+          <option value="8" selected>8</option>
+          <option value="16">16</option>
+          <option value="32">32</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Number A</span>
+      <div class="input-row">
+        <span class="badge badge-a">A</span>
+        <input type="text" id="addA" placeholder="e.g. 01011010" autocomplete="off">
+      </div>
+      <div class="error-msg" id="addA-err"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label">Number B</span>
+      <div class="input-row">
+        <span class="badge badge-b">B</span>
+        <input type="text" id="addB" placeholder="e.g. 00110101" autocomplete="off">
+      </div>
+      <div class="error-msg" id="addB-err"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="computeAddition()">Add</button>
+      <button class="btn-secondary" onclick="clearAddition()">Clear</button>
+    </div>
+
+    <div id="addSteps">
+      <div class="empty-state">Enter two numbers and click Add to see the steps</div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!--  TAB 3 : MULTIPLY / DIVIDE                  -->
+  <!-- ════════════════════════════════════════════ -->
+  <div class="tab-content" id="tab-muldiv">
+    <h2>Multiply &amp; Divide</h2>
+    <p class="subtitle">Binary multiplication &amp; division with steps</p>
+
+    <div class="op-select-row">
+      <button class="op-btn active" id="opMul" onclick="setOp('mul')">✕ Multiply</button>
+      <button class="op-btn" id="opBooth" onclick="setOp('booth')">⚙ Booth's Algorithm</button>
+      <button class="op-btn" id="opDiv" onclick="setOp('div')">÷ Divide</button>
+    </div>
+
+    <div class="options-row">
+      <label>
+        Input as:
+        <select id="mdInputMode">
+          <option value="bin">Binary</option>
+          <option value="dec">Decimal</option>
+        </select>
+      </label>
+      <label>
+        <input type="checkbox" id="mdSigned">
+        Signed (Two's Complement)
+      </label>
+      <label>
+        Bits:
+        <select id="mdBits">
+          <option value="8" selected>8</option>
+          <option value="16">16</option>
+          <option value="32">32</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="field">
+      <span class="field-label" id="mdLabelA">Multiplicand</span>
+      <div class="input-row">
+        <span class="badge badge-a">A</span>
+        <input type="text" id="mdA" placeholder="e.g. 00001101" autocomplete="off">
+      </div>
+      <div class="error-msg" id="mdA-err"></div>
+    </div>
+
+    <div class="field">
+      <span class="field-label" id="mdLabelB">Multiplier</span>
+      <div class="input-row">
+        <span class="badge badge-b">B</span>
+        <input type="text" id="mdB" placeholder="e.g. 00000101" autocomplete="off">
+      </div>
+      <div class="error-msg" id="mdB-err"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="computeMulDiv()">Calculate</button>
+      <button class="btn-secondary" onclick="clearMulDiv()">Clear</button>
+    </div>
+
+    <div id="mdSteps">
+      <div class="empty-state">Enter two numbers and click Calculate</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   TABS
+   ═══════════════════════════════════════════════ */
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const ids = ['converter', 'addition', 'muldiv'];
+    b.classList.toggle('active', ids[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+
+  // Clear inputs when switching tabs
+  if (name === 'converter') clearConverter();
+  else if (name === 'addition') clearAddition();
+  else if (name === 'muldiv') clearMulDiv();
+}
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════ */
+function padBits(s, n) { return s.length >= n ? s.slice(-n) : s.padStart(n, '0'); }
+function flipBits(s) { return s.split('').map(b => b === '0' ? '1' : '0').join(''); }
+function addOneBin(s) {
+  let c = 1, r = '';
+  for (let i = s.length - 1; i >= 0; i--) {
+    const sum = parseInt(s[i]) + c;
+    r = (sum % 2) + r;
+    c = Math.floor(sum / 2);
+  }
+  return r;
+}
+
+function toTwosComp(val, bits) {
+  if (val >= 0) return padBits(val.toString(2), bits);
+  return addOneBin(flipBits(padBits(Math.abs(val).toString(2), bits)));
+}
+
+function fromTwosComp(binStr, bits) {
+  const s = padBits(binStr, bits);
+  if (s[0] === '0') return parseInt(s, 2);
+  return -(parseInt(flipBits(s), 2) + 1);
+}
+
+function parseInput(raw, mode, signed, bits, errEl, inputEl) {
+  raw = raw.trim();
+  if (!raw) { errEl.textContent = 'Required'; inputEl.classList.add('error'); return null; }
+
+  if (mode === 'dec') {
+    if (!/^-?[0-9]+$/.test(raw)) { errEl.textContent = 'Invalid decimal'; inputEl.classList.add('error'); return null; }
+    const v = parseInt(raw, 10);
+    if (signed) {
+      const max = Math.pow(2, bits - 1) - 1;
+      const min = -Math.pow(2, bits - 1);
+      if (v > max || v < min) { errEl.textContent = `Out of ${bits}-bit signed range (${min} to ${max})`; inputEl.classList.add('error'); return null; }
+    } else {
+      if (v < 0) { errEl.textContent = 'Negative needs signed mode'; inputEl.classList.add('error'); return null; }
+      if (v >= Math.pow(2, bits)) { errEl.textContent = `Out of ${bits}-bit range`; inputEl.classList.add('error'); return null; }
+    }
+    return v;
+  } else {
+    if (!/^[01]+$/.test(raw)) { errEl.textContent = 'Binary digits only (0 and 1)'; inputEl.classList.add('error'); return null; }
+    if (raw.length > bits) { errEl.textContent = `Max ${bits} bits`; inputEl.classList.add('error'); return null; }
+    if (signed) return fromTwosComp(raw, bits);
+    return parseInt(raw, 2);
+  }
+}
+
+function makeStepBox(label, content, note, isResult) {
+  return `<div class="step-box${isResult ? ' result-box' : ''}">
+    <div class="step-label">${label}</div>
+    <pre>${content}</pre>
+    ${note ? `<div class="note">${note}</div>` : ''}
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════════
+   TAB 1 : CONVERTER
+   ═══════════════════════════════════════════════ */
+const fields = ['dec', 'hex', 'bin', 'oct'];
+const cInputs = {}, cErrors = {};
+fields.forEach(f => { cInputs[f] = document.getElementById(f); cErrors[f] = document.getElementById(f + '-err'); });
+const chkSM = document.getElementById('chkSM'), chkOC = document.getElementById('chkOC'), chkTC = document.getElementById('chkTC');
+const outSM = document.getElementById('outSM'), outOC = document.getElementById('outOC'), outTC = document.getElementById('outTC');
+const bitWidthSel = document.getElementById('bitWidth'), signedWarn = document.getElementById('signedWarn');
+let lastEdited = null;
+
+fields.forEach(f => {
+  cInputs[f].addEventListener('input', () => { lastEdited = f; fields.forEach(ff => cInputs[ff].classList.remove('active-source')); cInputs[f].classList.add('active-source'); });
+  cInputs[f].addEventListener('focus', () => { lastEdited = f; fields.forEach(ff => cInputs[ff].classList.remove('active-source')); cInputs[f].classList.add('active-source'); });
+  cInputs[f].addEventListener('keydown', e => { if (e.key === 'Enter') convertBase(); });
+});
+
+function clearConverterErrors() { fields.forEach(f => { cErrors[f].textContent = ''; cInputs[f].classList.remove('error'); }); signedWarn.textContent = ''; }
+
+function clearSigned() {
+  [outSM, outOC, outTC].forEach(o => { o.textContent = '—'; o.classList.remove('has-value'); });
+  signedWarn.textContent = '';
+}
+
+function clearConverter() {
+  fields.forEach(f => { cInputs[f].value = ''; cInputs[f].classList.remove('error', 'active-source'); cErrors[f].textContent = ''; });
+  lastEdited = null; clearSigned();
+}
+
+function computeSigned(value) {
+  const bits = parseInt(bitWidthSel.value);
+  const maxP = Math.pow(2, bits - 1) - 1, minSM = -maxP, minTC = -Math.pow(2, bits - 1);
+  signedWarn.textContent = '';
+
+  if (chkSM.checked) {
+    if (value > maxP || value < minSM) { outSM.textContent = 'overflow'; outSM.classList.add('has-value'); signedWarn.textContent = `⚠ Value out of ${bits}-bit range`; }
+    else { outSM.textContent = (value < 0 ? '1' : '0') + padBits(Math.abs(value).toString(2), bits - 1); outSM.classList.add('has-value'); }
+  } else { outSM.textContent = '—'; outSM.classList.remove('has-value'); }
+
+  if (chkOC.checked) {
+    if (value > maxP || value < minSM) { outOC.textContent = 'overflow'; outOC.classList.add('has-value'); if (!signedWarn.textContent) signedWarn.textContent = `⚠ Value out of ${bits}-bit range`; }
+    else { outOC.textContent = value >= 0 ? padBits(value.toString(2), bits) : flipBits(padBits(Math.abs(value).toString(2), bits)); outOC.classList.add('has-value'); }
+  } else { outOC.textContent = '—'; outOC.classList.remove('has-value'); }
+
+  if (chkTC.checked) {
+    if (value > maxP || value < minTC) { outTC.textContent = 'overflow'; outTC.classList.add('has-value'); if (!signedWarn.textContent) signedWarn.textContent = `⚠ Value out of ${bits}-bit range`; }
+    else { outTC.textContent = toTwosComp(value, bits); outTC.classList.add('has-value'); }
+  } else { outTC.textContent = '—'; outTC.classList.remove('has-value'); }
+}
+
+function convertBase() {
+  clearConverterErrors(); clearSigned();
+  let source = lastEdited;
+  if (!source || cInputs[source].value.trim() === '') source = fields.find(f => cInputs[f].value.trim() !== '');
+  if (!source) return;
+  const raw = cInputs[source].value.trim();
+  let value;
+  switch (source) {
+    case 'dec':
+      if (!/^-?[0-9]+$/.test(raw)) { cErrors.dec.textContent = 'Invalid decimal'; cInputs.dec.classList.add('error'); return; }
+      value = parseInt(raw, 10); break;
+    case 'hex':
+      if (!/^[0-9a-fA-F]+$/.test(raw)) { cErrors.hex.textContent = 'Invalid hex'; cInputs.hex.classList.add('error'); return; }
+      value = parseInt(raw, 16); break;
+    case 'bin':
+      if (!/^[01]+$/.test(raw)) { cErrors.bin.textContent = 'Invalid binary'; cInputs.bin.classList.add('error'); return; }
+      value = parseInt(raw, 2); break;
+    case 'oct':
+      if (!/^[0-7]+$/.test(raw)) { cErrors.oct.textContent = 'Invalid octal'; cInputs.oct.classList.add('error'); return; }
+      value = parseInt(raw, 8); break;
+  }
+  if (isNaN(value)) { cErrors[source].textContent = 'Could not parse'; cInputs[source].classList.add('error'); return; }
+
+  if (value < 0) {
+    cInputs.dec.value = value; cInputs.hex.value = '—'; cInputs.bin.value = '—'; cInputs.oct.value = '—';
+  } else {
+    cInputs.dec.value = value; cInputs.hex.value = value.toString(16).toUpperCase(); cInputs.bin.value = value.toString(2); cInputs.oct.value = value.toString(8);
+  }
+  computeSigned(value);
+}
+
+/* ═══════════════════════════════════════════════
+   TAB 2 : BINARY ADDITION
+   ═══════════════════════════════════════════════ */
+function clearAddition() {
+  document.getElementById('addA').value = '';
+  document.getElementById('addB').value = '';
+  document.getElementById('addA-err').textContent = '';
+  document.getElementById('addB-err').textContent = '';
+  document.getElementById('addA').classList.remove('error');
+  document.getElementById('addB').classList.remove('error');
+  document.getElementById('addSteps').innerHTML = '<div class="empty-state">Enter two numbers and click Add to see the steps</div>';
+}
+
+document.getElementById('addA').addEventListener('keydown', e => { if (e.key === 'Enter') computeAddition(); });
+document.getElementById('addB').addEventListener('keydown', e => { if (e.key === 'Enter') computeAddition(); });
+
+function computeAddition() {
+  const errA = document.getElementById('addA-err'), errB = document.getElementById('addB-err');
+  const inA = document.getElementById('addA'), inB = document.getElementById('addB');
+  errA.textContent = ''; errB.textContent = ''; inA.classList.remove('error'); inB.classList.remove('error');
+
+  const mode = document.getElementById('addInputMode').value;
+  const signed = document.getElementById('addSigned').checked;
+  const bits = parseInt(document.getElementById('addBits').value);
+
+  const valA = parseInput(inA.value, mode, signed, bits, errA, inA);
+  const valB = parseInput(inB.value, mode, signed, bits, errB, inB);
+  if (valA === null || valB === null) return;
+
+  const binA = signed ? toTwosComp(valA, bits) : padBits(valA.toString(2), bits);
+  const binB = signed ? toTwosComp(valB, bits) : padBits(valB.toString(2), bits);
+
+  // Step-by-step addition
+  let carry = 0, carries = '', resultBits = '';
+  const stepDetails = [];
+
+  for (let i = bits - 1; i >= 0; i--) {
+    const a = parseInt(binA[i]), b = parseInt(binB[i]);
+    const sum = a + b + carry;
+    const rBit = sum % 2;
+    const newCarry = Math.floor(sum / 2);
+    stepDetails.unshift({ pos: i, a, b, carryIn: carry, sum, rBit, carryOut: newCarry });
+    resultBits = rBit + resultBits;
+    carry = newCarry;
+  }
+  carries = carry.toString();
+  for (let i = 0; i < bits - 1; i++) {
+    carries += stepDetails[i].carryOut;
+  }
+
+  // Build carry string for display
+  let carryRow = '';
+  // Carry array: carryRow[i] is the carry INTO position i
+  let carryArr = new Array(bits).fill(0);
+  carryArr[bits - 1] = 0;
+  for (let i = bits - 1; i >= 0; i--) {
+    carryArr[i] = stepDetails[i].carryIn;
+  }
+  carryRow = carryArr.map(c => c).join('');
+  // The final carry out
+  const carryOut = carry;
+
+  const w = bits + 2;
+  let html = '';
+
+  // Step 1: Setup
+  const decALabel = signed ? ` (${valA})` : ` (${valA})`;
+  const decBLabel = signed ? ` (${valB})` : ` (${valB})`;
+  html += makeStepBox('Step 1 — Setup',
+    `  A = ${binA}${decALabel}\n  B = ${binB}${decBLabel}\n  Bit width: ${bits}-bit${signed ? ' (Two\'s Complement)' : ' (Unsigned)'}`,
+    signed ? 'Numbers are represented in Two\'s Complement form' : null);
+
+  // Step 2: Column-by-column
+  let colText = '';
+  for (let i = bits - 1; i >= 0; i--) {
+    const s = stepDetails[i];
+    colText += `  Col ${bits - i}: ${s.a} + ${s.b} + carry ${s.carryIn} = ${s.sum} → write ${s.rBit}, carry ${s.carryOut}\n`;
+  }
+  html += makeStepBox('Step 2 — Column-by-column addition', colText.trimEnd(),
+    'Process each column right to left, adding bits plus carry');
+
+  // Step 3: Visual addition
+  let visual = `  Carry: ${carryRow}${carryOut ? '  ← final carry out: ' + carryOut : ''}\n`;
+  visual += `         ${binA}   (A)\n`;
+  visual += `      +  ${binB}   (B)\n`;
+  visual += `        ${'─'.repeat(bits + 1)}\n`;
+  visual += `    ${carryOut ? carryOut : ' '}    ${resultBits}`;
+
+  const resultVal = signed ? fromTwosComp(resultBits, bits) : parseInt(resultBits, 2);
+  let overflowNote = '';
+  if (signed) {
+    const signA = binA[0], signB = binB[0], signR = resultBits[0];
+    if (signA === signB && signR !== signA) {
+      overflowNote = '⚠ Overflow detected! Both operands have the same sign but the result has a different sign.';
+    }
+  } else if (carryOut) {
+    overflowNote = `⚠ Carry out of ${bits} bits — result may be truncated in ${bits}-bit representation.`;
+  }
+
+  html += makeStepBox('Step 3 — Visual addition', visual, overflowNote || null);
+
+  // Result
+  const resultDec = signed ? fromTwosComp(resultBits, bits) : parseInt(resultBits, 2);
+  let resText = `  Binary:  ${carryOut && !signed ? carryOut : ''}${resultBits}\n  Decimal: ${resultDec}`;
+  if (carryOut && !signed) resText += `\n  (${bits}-bit): ${resultBits}  (truncated)`;
+  html += makeStepBox('Result', resText, null, true);
+
+  document.getElementById('addSteps').innerHTML = '<div class="steps-container">' + html + '</div>';
+}
+
+/* ═══════════════════════════════════════════════
+   TAB 3 : MULTIPLY / DIVIDE
+   ═══════════════════════════════════════════════ */
+let currentOp = 'mul';
+
+function setOp(op) {
+  currentOp = op;
+  document.getElementById('opMul').classList.toggle('active', op === 'mul');
+  document.getElementById('opBooth').classList.toggle('active', op === 'booth');
+  document.getElementById('opDiv').classList.toggle('active', op === 'div');
+  if (op === 'booth') {
+    document.getElementById('mdLabelA').textContent = 'Multiplicand (M)';
+    document.getElementById('mdLabelB').textContent = 'Multiplier (Q)';
+    document.getElementById('mdSigned').checked = true;
+    document.getElementById('mdSigned').disabled = true;
+  } else {
+    document.getElementById('mdSigned').disabled = false;
+    document.getElementById('mdLabelA').textContent = op === 'mul' ? 'Multiplicand' : 'Dividend';
+    document.getElementById('mdLabelB').textContent = op === 'mul' ? 'Multiplier' : 'Divisor';
+  }
+  
+  // Clear inputs and results when switching operation
+  clearMulDiv();
+}
+
+function clearMulDiv() {
+  document.getElementById('mdA').value = '';
+  document.getElementById('mdB').value = '';
+  document.getElementById('mdA-err').textContent = '';
+  document.getElementById('mdB-err').textContent = '';
+  document.getElementById('mdA').classList.remove('error');
+  document.getElementById('mdB').classList.remove('error');
+  document.getElementById('mdSteps').innerHTML = '<div class="empty-state">Enter two numbers and click Calculate</div>';
+}
+
+document.getElementById('mdA').addEventListener('keydown', e => { if (e.key === 'Enter') computeMulDiv(); });
+document.getElementById('mdB').addEventListener('keydown', e => { if (e.key === 'Enter') computeMulDiv(); });
+
+function binaryAdd(a, b) {
+  const len = Math.max(a.length, b.length);
+  a = a.padStart(len, '0');
+  b = b.padStart(len, '0');
+  let carry = 0, result = '';
+  for (let i = len - 1; i >= 0; i--) {
+    const sum = parseInt(a[i]) + parseInt(b[i]) + carry;
+    result = (sum % 2) + result;
+    carry = Math.floor(sum / 2);
+  }
+  if (carry) result = '1' + result;
+  return result;
+}
+
+function computeMulDiv() {
+  const errA = document.getElementById('mdA-err'), errB = document.getElementById('mdB-err');
+  const inA = document.getElementById('mdA'), inB = document.getElementById('mdB');
+  errA.textContent = ''; errB.textContent = ''; inA.classList.remove('error'); inB.classList.remove('error');
+
+  const mode = document.getElementById('mdInputMode').value;
+  const signed = document.getElementById('mdSigned').checked;
+  const bits = parseInt(document.getElementById('mdBits').value);
+
+  const valA = parseInput(inA.value, mode, signed, bits, errA, inA);
+  const valB = parseInput(inB.value, mode, signed, bits, errB, inB);
+  if (valA === null || valB === null) return;
+
+  if (currentOp === 'mul') computeMultiplication(valA, valB, signed, bits);
+  else if (currentOp === 'booth') computeBooth(valA, valB, bits);
+  else computeDivision(valA, valB, signed, bits);
+}
+
+function computeMultiplication(valA, valB, signed, bits) {
+  const negResult = signed && ((valA < 0) !== (valB < 0));
+  const absA = Math.abs(valA), absB = Math.abs(valB);
+  const binA = padBits(absA.toString(2), bits);
+  const binB = padBits(absB.toString(2), bits);
+
+  let html = '';
+
+  // Setup info
+  let setupText = `<details style="margin-bottom: 16px; background: #161625; border: 1px solid #2a2a4a; border-radius: 8px; padding: 10px;">
+    <summary style="cursor: pointer; font-weight: 600; color: #60a5fa;">📖 Show Algorithm Explanation</summary>
+    <div style="margin-top: 10px; font-size: 0.82rem; color: #bbb; line-height: 1.5; font-family: 'Segoe UI', system-ui, sans-serif;">
+      Uses standard <strong>Shift-and-Add</strong> multiplication. For signed numbers, absolute values are multiplied and the sign is applied at the end. For each bit of the multiplier (from left to right):
+      <ul style="margin-left: 20px; margin-top: 4px;">
+        <li>If bit is <strong>1</strong>: Shift the multiplicand left and add it to the sum.</li>
+        <li>If bit is <strong>0</strong>: Do nothing (add 0).</li>
+      </ul>
+    </div>
+  </details>`;
+  setupText += `<ul>`;
+  setupText += `<li>Multiplicand (<span class="highlight">A</span>) = ${signed ? toTwosComp(valA, bits) : binA} (${valA})</li>`;
+  setupText += `<li>Multiplier (<span class="highlight">B</span>) = ${signed ? toTwosComp(valB, bits) : binB} (${valB})</li>`;
+  if (signed) {
+    setupText += `<li>Working with absolute values: |A| = ${binA} (${absA}), |B| = ${binB} (${absB})</li>`;
+    setupText += `<li>Result sign will be: ${negResult ? 'negative' : 'positive'}</li>`;
+  }
+  setupText += `</ul>`;
+  html += `<div style="margin-bottom: 20px;">${setupText}</div>`;
+
+  // Start table
+  let tableHtml = `<div class="algo-table-wrapper"><table class="algo-table">`;
+  tableHtml += `<thead><tr><th>Step</th><th>Multiplier Bit</th><th>Partial Product</th><th>Accumulated Sum</th><th>Explanation</th></tr></thead><tbody>`;
+
+  // Iterations
+  let runningSum = '0';
+  for (let i = bits - 1; i >= 0; i--) {
+    const bit = parseInt(binB[i]);
+    const shift = bits - 1 - i;
+    const stepNum = shift + 1;
+    
+    let pp, actionStr;
+    if (bit === 1) {
+      pp = binA + '0'.repeat(shift);
+      actionStr = `Bit is 1 → Add A shifted by ${shift}`;
+    } else {
+      pp = '0'.repeat(bits + shift);
+      actionStr = `Bit is 0 → Add 0`;
+    }
+    
+    const oldSum = runningSum;
+    if (bit === 1) {
+      runningSum = binaryAdd(runningSum, pp);
+    }
+    
+    tableHtml += `<tr>
+      <td>${stepNum}</td>
+      <td>B[${shift}] = <span class="highlight">${bit}</span></td>
+      <td>${pp}</td>
+      <td>${runningSum}</td>
+      <td class="text-left">${actionStr}</td>
+    </tr>`;
+  }
+
+  tableHtml += `</tbody></table></div>`;
+  html += tableHtml;
+
+  // ── Result ──
+  const resultVal = absA * absB;
+  const finalVal = negResult ? -resultVal : resultVal;
+  let resultBin = resultVal.toString(2);
+  
+  let resHtml = `<div class="step-box result-box" style="text-align: center;">`;
+  resHtml += `<div style="font-weight: bold; margin-bottom: 8px;">Final Magnitude: <span style="color: #6ee7b7;">${resultBin}</span></div>`;
+  resHtml += `<div>Decimal: <span style="font-weight: bold;">${finalVal}</span></div>`;
+  if (signed && negResult) {
+    const tcBits = Math.max(bits * 2, resultBin.length + 1);
+    resHtml += `<div style="margin-top: 8px;">Two's Complement (${tcBits}-bit): <span style="color: #6ee7b7;">${toTwosComp(finalVal, tcBits)}</span></div>`;
+  }
+  resHtml += `</div>`;
+  html += resHtml;
+
+  document.getElementById('mdSteps').innerHTML = html;
+}
+
+function computeDivision(valA, valB, signed, bits) {
+  if (valB === 0) {
+    document.getElementById('mdB-err').textContent = 'Cannot divide by zero';
+    document.getElementById('mdB').classList.add('error');
+    return;
+  }
+
+  const negResult = signed && ((valA < 0) !== (valB < 0));
+  const negRemainder = signed && valA < 0;
+  const absA = Math.abs(valA), absB = Math.abs(valB);
+  const binA = padBits(absA.toString(2), bits);
+  const binB = padBits(absB.toString(2), bits);
+
+  let html = '';
+
+  // Setup info
+  let setupText = `<details style="margin-bottom: 16px; background: #161625; border: 1px solid #2a2a4a; border-radius: 8px; padding: 10px;">
+    <summary style="cursor: pointer; font-weight: 600; color: #60a5fa;">📖 Show Algorithm Explanation</summary>
+    <div style="margin-top: 10px; font-size: 0.82rem; color: #bbb; line-height: 1.5; font-family: 'Segoe UI', system-ui, sans-serif;">
+      Uses standard bit-by-bit <strong>Long Division (Restoring Division)</strong>. For signed numbers, absolute values are divided and the signs are applied at the end. For each bit of the dividend (from MSB to LSB):
+      <ul style="margin-left: 20px; margin-top: 4px;">
+        <li>Shift the remainder left and bring down the next bit from the dividend.</li>
+        <li>If the partial remainder is <strong>≥ divisor</strong>: Subtract divisor, append <strong>1</strong> to the quotient.</li>
+        <li>If the partial remainder is <strong>&lt; divisor</strong>: Append <strong>0</strong> to the quotient.</li>
+      </ul>
+    </div>
+  </details>`;
+  setupText += `<ul>`;
+  setupText += `<li>Dividend (<span class="highlight">A</span>) = ${signed ? toTwosComp(valA, bits) : binA} (${valA})</li>`;
+  setupText += `<li>Divisor (<span class="highlight">B</span>) = ${signed ? toTwosComp(valB, bits) : binB} (${valB})</li>`;
+  if (signed) {
+    setupText += `<li>Working with absolute values: |A| = ${binA} (${absA}), |B| = ${binB} (${absB})</li>`;
+    setupText += `<li>Quotient sign: ${negResult ? 'negative' : 'positive'}, Remainder sign: ${negRemainder ? 'negative' : 'positive'}</li>`;
+  }
+  setupText += `</ul>`;
+  html += `<div style="margin-bottom: 20px;">${setupText}</div>`;
+
+  // Start table
+  let tableHtml = `<div class="algo-table-wrapper"><table class="algo-table">`;
+  tableHtml += `<thead><tr><th>Step</th><th>Partial Remainder</th><th>Quotient (Q)</th><th>New Remainder</th><th>Explanation</th></tr></thead><tbody>`;
+
+  // Long division
+  let quotient = '', remainder = 0;
+  let partial = '';
+
+  for (let i = 0; i < binA.length; i++) {
+    remainder = remainder * 2 + parseInt(binA[i]);
+    partial += binA[i];
+    
+    let oldRem = remainder;
+    let cmpText;
+    
+    if (remainder >= absB) {
+      quotient += '1';
+      remainder -= absB;
+      cmpText = `${oldRem} ≥ ${absB} → subtract B, Q append <span class="highlight">1</span>`;
+    } else {
+      quotient += '0';
+      cmpText = `${oldRem} < ${absB} → Q append <span class="highlight">0</span>`;
+    }
+
+    tableHtml += `<tr>
+      <td>${i + 1} (bring down ${binA[i]})</td>
+      <td>${padBits(oldRem.toString(2), partial.length)} (${oldRem})</td>
+      <td>${quotient}</td>
+      <td>${remainder === 0 ? '0' : padBits(remainder.toString(2), 1)} (${remainder})</td>
+      <td class="text-left">${cmpText}</td>
+    </tr>`;
+  }
+
+  tableHtml += `</tbody></table></div>`;
+  html += tableHtml;
+
+  // Remove leading zeros from quotient (but keep at least 1)
+  const quotientClean = quotient.replace(/^0+/, '') || '0';
+
+  // ── Result ──
+  const qVal = parseInt(quotientClean, 2);
+  const finalQ = negResult ? -qVal : qVal;
+  const finalR = negRemainder ? -remainder : remainder;
+
+  let resHtml = `<div class="step-box result-box" style="text-align: center;">`;
+  resHtml += `<div style="font-weight: bold; margin-bottom: 8px;">Final Quotient: <span style="color: #6ee7b7;">${quotientClean}</span> (${finalQ})</div>`;
+  resHtml += `<div style="font-weight: bold; margin-bottom: 8px;">Final Remainder: <span style="color: #6ee7b7;">${remainder === 0 ? '0' : remainder.toString(2)}</span> (${finalR})</div>`;
+  resHtml += `<div>Verification: ${absB} × ${qVal} + ${remainder} = ${absB * qVal + remainder}</div>`;
+  if (signed) {
+    resHtml += `<div style="margin-top: 8px;">Signed: (${valA}) ÷ (${valB}) = ${finalQ} remainder ${finalR}</div>`;
+  }
+  resHtml += `</div>`;
+  html += resHtml;
+
+  document.getElementById('mdSteps').innerHTML = html;
+}
+
+/* ═══════════════════════════════════════════════
+   BOOTH'S ALGORITHM
+   ═══════════════════════════════════════════════ */
+function binSubtract(a, b, bits) {
+  // a - b in two's complement = a + (~b + 1), truncated to bits
+  const bFlipped = flipBits(b);
+  const bNeg = addOneBin(bFlipped);
+  // add a + bNeg
+  let carry = 0, result = '';
+  const pa = a.padStart(bits, a[0]);
+  const pb = bNeg.padStart(bits, bNeg[0]);
+  for (let i = bits - 1; i >= 0; i--) {
+    const sum = parseInt(pa[i]) + parseInt(pb[i]) + carry;
+    result = (sum % 2) + result;
+    carry = Math.floor(sum / 2);
+  }
+  return result.slice(-bits);
+}
+
+function binAddSigned(a, b, bits) {
+  let carry = 0, result = '';
+  const pa = a.padStart(bits, a[0]);
+  const pb = b.padStart(bits, b[0]);
+  for (let i = bits - 1; i >= 0; i--) {
+    const sum = parseInt(pa[i]) + parseInt(pb[i]) + carry;
+    result = (sum % 2) + result;
+    carry = Math.floor(sum / 2);
+  }
+  return result.slice(-bits);
+}
+
+function arithmeticRightShift(combined) {
+  // Preserve MSB (sign bit), shift everything right by 1
+  const msb = combined[0];
+  return msb + combined.slice(0, -1);
+}
+
+function computeBooth(valA, valB, bits) {
+  const M = toTwosComp(valA, bits);          // Multiplicand
+  const negM = toTwosComp(-valA, bits);      // -M in two's complement
+  const Q = toTwosComp(valB, bits);          // Multiplier
+  let A = '0'.repeat(bits);                  // Accumulator
+  let Qreg = Q;                             // Q register
+  let Q_1 = '0';                            // Q_-1 bit
+  const n = bits;                            // Counter
+
+  let html = '';
+
+  // Setup info
+  let setupText = `<details style="margin-bottom: 16px; background: #161625; border: 1px solid #2a2a4a; border-radius: 8px; padding: 10px;">
+    <summary style="cursor: pointer; font-weight: 600; color: #60a5fa;">📖 Show Algorithm Explanation</summary>
+    <div style="margin-top: 10px; font-size: 0.82rem; color: #bbb; line-height: 1.5; font-family: 'Segoe UI', system-ui, sans-serif;">
+      <strong>Booth's Algorithm</strong> works directly on Two's Complement signed numbers. It inspects pairs of bits (Q₀ and Q₋₁) on each step:
+      <ul style="margin-left: 20px; margin-top: 4px;">
+        <li><strong>1 0</strong>: Subtract M from A (A = A − M)</li>
+        <li><strong>0 1</strong>: Add M to A (A = A + M)</li>
+        <li><strong>0 0</strong> or <strong>1 1</strong>: Do nothing</li>
+      </ul>
+      After checking and optionally adding/subtracting, perform an <strong>Arithmetic Right Shift</strong> on the combined registers [A, Q, Q₋₁] to preserve the sign bit.
+    </div>
+  </details>`;
+  setupText += `<ul>`;
+  setupText += `<li>Multiplicand (<span class="highlight">M</span>) = ${valA} = <span class="highlight">${M}</span></li>`;
+  setupText += `<li>Two's Complement of M (<span class="highlight">−M</span>) = ${-valA} = <span class="highlight">${negM}</span></li>`;
+  setupText += `<li>Multiplier (<span class="highlight">Q</span>) = ${valB} = <span class="highlight">${Q}</span></li>`;
+  setupText += `</ul>`;
+  html += `<div style="margin-bottom: 20px;">${setupText}</div>`;
+
+  // Start table
+  let tableHtml = `<div class="algo-table-wrapper"><table class="algo-table">`;
+  tableHtml += `<thead><tr><th>Iteration</th><th>Steps</th><th>A</th><th>Q</th><th>Q₋₁</th><th>Explanation</th></tr></thead><tbody>`;
+
+  // Iteration 0
+  tableHtml += `<tr>
+    <td>0</td>
+    <td class="text-left">Initialization</td>
+    <td>${A}</td>
+    <td>${Qreg}</td>
+    <td>${Q_1}</td>
+    <td class="text-left">Initial state</td>
+  </tr>`;
+
+  // Iterations 1 to n
+  for (let i = 0; i < n; i++) {
+    const Q0 = Qreg[Qreg.length - 1];
+    let action = '';
+    let actionDetail = '';
+    const prevA = A, prevQ = Qreg, prevQ1 = Q_1;
+
+    let stepName = `Q₀ Q₋₁ = <span class="highlight">${Q0}${Q_1}</span>`;
+    
+    if (Q0 === '1' && Q_1 === '0') {
+      A = binSubtract(A, M, bits);
+      action = `<span class="highlight">A = A − M</span> (${prevA} + ${negM})`;
+      actionDetail = `Subtract M from A`;
+    } else if (Q0 === '0' && Q_1 === '1') {
+      A = binAddSigned(A, M, bits);
+      action = `<span class="highlight">A = A + M</span> (${prevA} + ${M})`;
+      actionDetail = `Add M to A`;
+    } else {
+      action = `No operation`;
+      actionDetail = `Do nothing`;
+    }
+
+    const A_afterArith = A;
+
+    // Output row 1 for iteration
+    tableHtml += `<tr>
+      <td rowspan="2">${i + 1}</td>
+      <td class="text-left">${stepName}</td>
+      <td>${A_afterArith}</td>
+      <td>${prevQ}</td>
+      <td>${prevQ1}</td>
+      <td class="text-left">${action}</td>
+    </tr>`;
+
+    // Arithmetic right shift [A][Q], Q_-1 gets old Q[n-1]
+    const fullCombined = A_afterArith + prevQ;
+    const newQ_1 = fullCombined[fullCombined.length - 1];
+    const shiftedFull = A_afterArith[0] + fullCombined.slice(0, -1);
+    A = shiftedFull.slice(0, bits);
+    Qreg = shiftedFull.slice(bits, bits * 2);
+    Q_1 = newQ_1;
+
+    // Output row 2 for iteration (Shift)
+    tableHtml += `<tr>
+      <td class="text-left">Right shift</td>
+      <td>${A}</td>
+      <td>${Qreg}</td>
+      <td>${Q_1}</td>
+      <td class="text-left">Arithmetic shift A Q Q₋₁</td>
+    </tr>`;
+  }
+
+  tableHtml += `</tbody></table></div>`;
+  html += tableHtml;
+
+  // ── Result ──
+  const resultBin = A + Qreg;
+  const resultVal = fromTwosComp(resultBin, bits * 2);
+  let resHtml = `<div class="step-box result-box" style="text-align: center;">`;
+  resHtml += `<div style="font-weight: bold; margin-bottom: 8px;">Final Result (AQ): <span style="color: #6ee7b7;">${A} ${Qreg}</span></div>`;
+  resHtml += `<div>In decimal: <span style="font-weight: bold;">${resultVal}</span> (Check: ${valA} × ${valB} = ${valA * valB})</div>`;
+  resHtml += `</div>`;
+  html += resHtml;
+
+  document.getElementById('mdSteps').innerHTML = html;
+}
+</script>
+
+</body>
+</html>
